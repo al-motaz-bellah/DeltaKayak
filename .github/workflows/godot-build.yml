@@ -1,30 +1,8 @@
-
-name: Godot Build
-on: [push]
-
-jobs:
-  export:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Export Game
-        run: |
-          # 1. تحميل المحرك من الرابط المباشر
-          wget https://downloads.tuxfamily.org/godotengine/4.2.1/Godot_v4.2.1-stable_linux.x86_64.zip -O godot.zip
-          unzip -q godot.zip
-          mv Godot_v4.2.1-stable_linux.x86_64 godot_executable
+            - name: Download a Build Artifact
+  uses: actions/download-artifact@v3.1.0
+  with:
+    # Artifact name
+    name: # optional
+    # Destination path
+    path: # optional
           
-          # 2. إنشاء مجلد للمخرجات
-          mkdir -p build/
-          
-          # 3. تشغيل أمر التصدير
-          # استبدل "Windows Desktop" بالاسم الموجود في ملف export_presets.cfg الخاص بك
-          ./godot_executable --headless --export-release "Windows Desktop" ./build/game.exe
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: game-build
-          path: ./build/
