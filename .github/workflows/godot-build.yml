@@ -1,24 +1,30 @@
-name: Manual Godot Build
+name: Robust Build
 on: [push]
 
 jobs:
-  export:
+  build-and-debug:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download Godot
+      - name: Debug - List Files
         run: |
-          wget -q https://downloads.tuxfamily.org/godotengine/4.2.1/Godot_v4.2.1-stable_linux.x86_64.zip -O godot.zip
-          unzip -q godot.zip -d /usr/local/bin/
+          echo "محتويات المشروع الحالية:"
+          find . -maxdepth 2 -not -path '*/.*'
+
+      - name: Install Godot
+        uses: godotengine/godot-setup@v1
+        with:
+          version: 4.2.1
+          include-templates: true
 
       - name: Export Project
         run: |
-          # إنشاء مجلد البناء
           mkdir -p build/
-          # أمر تصدير المشروع (تأكد من اسم Preset كما هو في ملف export_presets.cfg)
-          /usr/local/bin/Godot_v4.2.1-stable_linux.x86_64 --headless --export-release "Windows Desktop" ./build/game.exe
+          # محاولة التصدير باسم افتراضي، وسنرى النتيجة في الـ Logs
+          godot --headless --export-release "Windows Desktop" ./build/game.exe || \
+          godot --headless --export-release "Win" ./build/game.exe
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
