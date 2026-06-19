@@ -1,27 +1,19 @@
 name: Godot Build
 on: [push]
-
 jobs:
   export-game:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Export Game
         uses: firebelley/godot-export@v6.0.0
         with:
-          # نستخدم وضع التصدير التلقائي لكل الأجهزة لضمان وجود مخرجات
-          export_preset: "Windows Desktop"
-          # نطلب ضغط المخرجات فوراً لسهولة الرفع
+          godot_executable_download_url: https://github.com/godotengine/godot/releases/download/4.2.1-stable/Godot_v4.2.1-stable_linux.x86_64.zip
+          godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/4.2.1-stable/Godot_v4.2.1-stable_export_templates.tpz
           archive_output: true
-
-      - name: Debug - List Files
-        run: ls -R  # هذا السطر سيظهر لنا في الـ Logs أين وضعت الملفات بالضبط
-
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: game-build
-          # هذا النجمتين يعني "ابحث في أي مجلد فرعي عن أي ملف مضغوط"
-          path: ./**/*.zip
+          path: /home/runner/work/DeltaKayak/DeltaKayak/.github/build/
