@@ -1,3 +1,4 @@
+
 name: Godot Build
 on: [push]
 
@@ -8,18 +9,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Godot
-        uses: godotengine/godot-setup@v1
-        with:
-          version: 4.2.1
-          include-templates: true
-
-      - name: Export Project
+      - name: Export Game
         run: |
+          # 1. تحميل المحرك من الرابط المباشر
+          wget https://downloads.tuxfamily.org/godotengine/4.2.1/Godot_v4.2.1-stable_linux.x86_64.zip -O godot.zip
+          unzip -q godot.zip
+          mv Godot_v4.2.1-stable_linux.x86_64 godot_executable
+          
+          # 2. إنشاء مجلد للمخرجات
           mkdir -p build/
-          # تصدير اللعبة - سأقوم هنا باستخدام اسم افتراضي شائع
-          # إذا فشل، سأعطيك الطريقة لتعديل هذا الاسم
-          godot --headless --export-release "Windows Desktop" ./build/game.exe
+          
+          # 3. تشغيل أمر التصدير
+          # استبدل "Windows Desktop" بالاسم الموجود في ملف export_presets.cfg الخاص بك
+          ./godot_executable --headless --export-release "Windows Desktop" ./build/game.exe
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
