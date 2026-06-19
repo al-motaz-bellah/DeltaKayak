@@ -1,8 +1,28 @@
-            - name: Download a Build Artifact
-  uses: actions/download-artifact@v3.1.0
-  with:
-    # Artifact name
-    name: # optional
-    # Destination path
-    path: # optional
+name: Godot Build
+on: [push]
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Game
+        run: |
+          # 1. تنزيل المحرك مع إعادة المحاولة في حال فشل الاتصال
+          curl -L --retry 5 https://github.com/godotengine/godot/releases/download/4.2.1-stable/Godot_v4.2.1-stable_linux.x86_64.zip -o godot.zip
+          unzip -q godot.zip
           
+          # 2. التأكد من المسار
+          ls -l
+          
+          # 3. تشغيل المحرك للتصدير
+          # قمت بتغيير اسم الملف للمسار الصحيح الذي ينتج عن فك الضغط
+          ./Godot_v4.2.1-stable_linux.x86_64 --headless --export-release "Windows Desktop" ./game.exe
+          
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: game-build
+          path: ./game.exe
