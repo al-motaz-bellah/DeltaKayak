@@ -8,5 +8,5 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Build
-        run: echo "Hello World"
+      - name: List files
+        run: ls -R
