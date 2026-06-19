@@ -1,23 +1,27 @@
-name: Godot Build
+name: Manual Godot Build
 on: [push]
 
 jobs:
-  export-game:
+  export:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Export Game
-        uses: firebelley/godot-export@v6.0.0
-        with:
-          # نترك الأداة تحمل الإصدار الافتراضي بدون روابط يدوية
-          # ونحدد فقط مسار المشروع
-          relative_project_path: ./
-          archive_output: true
+      - name: Download Godot
+        run: |
+          wget -q https://downloads.tuxfamily.org/godotengine/4.2.1/Godot_v4.2.1-stable_linux.x86_64.zip -O godot.zip
+          unzip -q godot.zip -d /usr/local/bin/
+
+      - name: Export Project
+        run: |
+          # إنشاء مجلد البناء
+          mkdir -p build/
+          # أمر تصدير المشروع (تأكد من اسم Preset كما هو في ملف export_presets.cfg)
+          /usr/local/bin/Godot_v4.2.1-stable_linux.x86_64 --headless --export-release "Windows Desktop" ./build/game.exe
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: game-build
-          path: ./.github/build/
+          path: ./build/
