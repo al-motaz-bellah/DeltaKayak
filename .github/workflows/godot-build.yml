@@ -1,31 +1,29 @@
-name: Ultimate Build
+
+     name: Simple Build
 on: [push]
 
 jobs:
-  build:
+  export:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Godot
-        uses: godotengine/godot-setup@v1
-        with:
-          version: 4.2.1
-
-      - name: Export Project
+      - name: Download and Export
         run: |
-          # استخراج اسم الـ Preset الأول من ملف الإعدادات
-          PRESET_NAME=$(grep -oP '(?<=\[preset\.)[^\]]+' export_presets.cfg | head -n 1)
-          # إذا فشل الاستخراج، نستخدم افتراضياً Windows Desktop
-          NAME=${PRESET_NAME:-"Windows Desktop"}
+          # 1. تحميل المحرك برابط مباشر ومضمون
+          wget https://github.com/godotengine/godot/releases/download/4.2.1-stable/Godot_v4.2.1-stable_linux.x86_64.zip
+          unzip Godot_v4.2.1-stable_linux.x86_64.zip
+          mv Godot_v4.2.1-stable_linux.x86_64 godot_executable
           
-          echo "جاري التصدير باستخدام الـ Preset: $NAME"
+          # 2. إنشاء مجلد للمخرجات
           mkdir -p build/
-          godot --headless --export-release "$NAME" ./build/game.exe
-
+          
+          # 3. أمر التصدير المباشر
+          ./godot_executable --headless --export-release "Windows Desktop" build/game.exe
+          
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: game-build
-          path: ./build/
+          path: build/
